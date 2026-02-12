@@ -1,0 +1,78 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+
+  reviews     Review[]
+  completions Completion[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Department {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  courses   Course[]
+  createdAt DateTime @default(now())
+}
+
+model Course {
+  id           Int      @id @default(autoincrement())
+  name         String
+  description  String
+  skills       String[]
+  externalLink String
+  departmentId Int  
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  department Department @relation(fields: [departmentId], references: [id])
+  reviews      Review[]
+  completions  Completion[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String
+  userId    Int
+  courseId  Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+}
+
+model Completion {
+  id              Int      @id @default(autoincrement())
+  duration        String
+  completionDate  DateTime @default(now())
+  userId          Int
+  courseId        Int
+  createdAt       DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  course Course @relation(fields: [courseId], references: [id])
+}

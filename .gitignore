@@ -1,0 +1,26 @@
+# node_modules
+# # Keep environment variables out of version control
+# .env
+
+# /src/generated/prisma
+
+
+# Dependency folders - this catches node_modules in root, backend, and frontend
+node_modules/
+
+# Environment secrets - catches .env in root or subfolders
+.env
+.env.*
+
+# Build folders
+dist/
+build/
+.cache/
+
+# Prisma generated files
+src/generated/prisma
+backend/prisma/migrations/*.sql
+
+# OS files
+.DS_Store
+Thumbs.db
