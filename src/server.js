@@ -7,6 +7,7 @@ import { connectDB, disconnectDB } from './config/db.js';
 import coursesRoutes from './routes/coursesRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import progressRoutes from './routes/progressRoutes.js';
+import departmentRoutes from './routes/departmentRoutes.js';
 
 config(); // Load environment variables from .env file
 connectDB(); // Connect to the database
@@ -21,6 +22,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/courses', coursesRoutes);
 app.use('/auth', authRoutes);
 app.use('/progress', progressRoutes);
+app.use('/departments', departmentRoutes); 
+
 
 const PORT = 5000;
 const server = app.listen(PORT, () => {

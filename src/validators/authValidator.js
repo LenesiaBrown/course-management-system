@@ -5,14 +5,31 @@ export const registerSchema = z.object({
     email: z
         .string()
         .min(1, "Email is required")
-        .email("Invalid email format"),
+        .email({ message: "Invalid email format" }),
     password: z
         .string()
-        .min(6, "Password must be at least 6 characters"),
+        .transform((val, ctx) => {
+            if (!val || val.length === 0) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Password is required",
+                });
+                return z.NEVER;  // Stop processing
+            }
+            if (val.length < 6) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: "Password must be at least 6 characters",
+                });
+                return z.NEVER;
+            }
+            return val;  // Valid, return as-is
+        }),
     role: z
-        .enum(['USER', 'ADMIN'], {
-            errorMap: () => ({ message: "Role must be either USER or ADMIN" })
-        })
+        .refine(
+        (val) => !val || ['USER', 'ADMIN'].includes(val),
+        { message: "Role must be either USER or ADMIN" }
+        )
         .optional()  // Optional because it defaults to USER
         .default('USER'),  // If not provided, set to USER
 });
@@ -22,7 +39,7 @@ export const loginSchema = z.object({
     email: z
         .string()
         .min(1, "Email is required")
-        .email("Invalid email format"),
+        .email({ message: "Invalid email format" }),
     password: z
         .string()
         .min(1, "Password is required"),
